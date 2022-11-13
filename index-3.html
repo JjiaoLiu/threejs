@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>line requestAnimationFrame</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+    <style type="text/css">
+      div#canvas-frame {
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        height: 600px;
+        background-color: #eeeeee;
+      }
+    </style>
+    <!-- Import maps polyfill -->
+    <!-- Remove this when import maps will be widely supported -->
+    <script
+      async
+      src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"
+    ></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./node_modules/three/build/three.module.js"
+        }
+      }
+    </script>
+    <script type="module">
+      import * as THREE from "./node_modules/three/src/Three.js";
+      var renderer, width, height;
+      function initThree() {
+        width = document.getElementById("canvas-frame").clientWidth;
+        height = document.getElementById("canvas-frame").clientHeight;
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(width, height);
+        document
+          .getElementById("canvas-frame")
+          .appendChild(renderer.domElement);
+        renderer.setClearColor(0xffffff, 1.0);
+      }
+      var camera;
+      function initCamera() {
+        camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
+        camera.position.set(0, 1000, 0); //camera.position相机的位置
+        camera.lookAt(0, 0, 0); //camera.lookAt相机看向哪个坐标
+      }
+
+      var scene;
+      function initScene() {
+        scene = new THREE.Scene();
+      }
+
+      var light;
+      function initLight() {
+        light = new THREE.DirectionalLight(0xff0000, 1.0, 0);
+        light.position.set(100, 100, 200);
+        scene.add(light);
+      }
+
+      function initObj() {
+        let geometry = new THREE.BufferGeometry();
+        let material = new THREE.LineBasicMaterial({
+          vertexColors: true,
+        });
+        const colors = new Float32Array([1.0, 0.0, 0.0, 0.0, 1.0, 0.0]);
+        const positions = new Float32Array([-100, 0, 100, 100, 0, -100]);
+        const indexs = new Uint16Array([0, 1]);
+        geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+        geometry.setAttribute(
+          "position",
+          new THREE.BufferAttribute(positions, 3)
+        );
+        geometry.index = new THREE.BufferAttribute(indexs, 1);
+        var line = new THREE.Line(geometry, material);
+        scene.add(line);
+      }
+      function animation() {
+        camera.position.x = camera.position.x + 1;
+        renderer.render(scene, camera);
+        requestAnimationFrame(animation);
+      }
+      function threeStart() {
+        initThree();
+        initCamera();
+        initScene();
+        initLight();
+        initObj();
+        animation();
+      }
+      document.onload = threeStart();
+    </script>
+  </head>
+
+  <body>
+    <div id="canvas-frame"></div>
+  </body>
+</html>

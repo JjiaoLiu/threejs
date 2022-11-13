@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "stats.js": "^0.17.0",
+    "three": "0.126.1"
+  },
+  "devDependencies": {
+    "lil-gui": "^0.17.0"
+  }
+}
